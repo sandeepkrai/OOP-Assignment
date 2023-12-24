@@ -5,58 +5,39 @@ class teacher {
 
     static class Student {
         String name, username, password;
-        int rollNo;
-        int[] attendence = new int[8];
+        int rollNo, workday;
+        int[] attendence = new int[20];
         boolean isApplied = false;
+        String isAccepted = "NA";
 
+        Student(String sName, int rNo, String un, String pd, int wd) {
+            name = sName;
+            rollNo = rNo;
+            username = un;
+            password = pd;
+            workday = wd;
+        }
+        
         Student(String sName, int rNo, String un, String pd) {
             name = sName;
             rollNo = rNo;
             username = un;
             password = pd;
-        }
-
-        void ViewEverydayAttendence() {
-
-        }
-
-        void ApplyForLeave() {
-
-        }
-
-        void LeaveStatus() {
-
+            workday = 10;
         }
     }
 
     static class Instructor {
-        String name, username, password;
+        String name, username,password;
+        int id;
 
-        Instructor(String name, String username, String password) {
+        Instructor(String name,int id, String username, String password) {
             this.name = name;
             this.username = username;
+            this.id=id;
             this.password = password;
         }
 
-        void grant() {
-
-        }
-
-        void reject() {
-
-        }
-
-        void update() {
-
-        }
-
-        void markAttendence() {
-
-        }
-
-        void viewReports() {
-
-        }
     }
 
     static class Administrator {
@@ -83,27 +64,23 @@ class teacher {
         }
 
         Instructor[] createInstructorAccount() {
+            Scanner sc= new Scanner(System.in);
             System.out.println("Enter the no. of Instructors: ");
             int num = sc.nextInt();
-            Instructor[] st = new Instructor[num];
+            Instructor[] in = new Instructor[num];
             System.out.println("Enter details of Instructor: ");
             for (int i = 0; i < num; i++) {
                 System.out.println("Enter the name of Instructor no. " + (i + 1));
-                st[i].name = sc.next();
-                System.out.println("Enter the username of Instructor\n " +( i + 1));
-                st[i].username = sc.next();
-                System.out.print("Enter the password of Istructor \n");
-                st[i].password = sc.next();
+                String name = sc.next();
+                System.out.println("Enter the ID No. of Instructor " + (i + 1));
+                int roll = sc.nextInt();
+                System.out.println("Enter the UserName of Instructor " + (i + 1));
+                String un = sc.next();
+                System.out.println("Enter the Password of INSTRUCTOR " + (i + 1));
+                String pd = sc.next();
+                in[i] = new Instructor(name, roll, un, pd);
             }
-            return st;
-        }
-
-        void deleteStudentAccount() {
-
-        }
-
-        void deleteInstructoAccount() {
-
+            return in;
         }
 
         void viewStudentsList(Student[] s, int num) {
@@ -138,18 +115,32 @@ class teacher {
             return;
         }
 
-        System.out.println("Select choice 1: View Attendence      2: Apply for Leave\n");
+        System.out.println("Select choice 1: View Attendence      2: Apply for Leave    3: View Application Status\n");
         int ch = sc.nextInt();
         switch (ch) {
             case 1:
-                for (int i = 0; i < s[studentId].attendence.length; i++) {
+                System.out.println("\nYour Attendence is as follows :-\n");
+                for (int i = 0; i < s[studentId].workday; i++) {
                     System.out.println(s[studentId].attendence[i] + "  ");
                 }
                 break;
             case 2:
+            
                 System.out.println("You have successfully applied for leave, Now go study!");
                 s[studentId].isApplied = true;
+
                 break;
+            
+            case 3:
+                if(s[studentId].isAccepted.compareTo("NA") == 0){
+                    System.out.println("You have not yet applied for leave!");
+                }
+                else if(s[studentId].isAccepted.compareTo("Yes")==0){
+                    System.out.println("Congratulations! Your leave application has been accepted. Now go and have fun!");
+                }
+                else{
+                    System.out.println("BadLuck! Your application was rejected, Try next time.");
+                }
         }
 
     }
@@ -172,19 +163,42 @@ class teacher {
         if (!isLogin) {
             System.out.println("Username or Password Mismatch, Please retry!");
             return;
-        } else {
-            System.out.println("Select choice 1: \nSet Attendence      \n2: View Leave Application\n");
-            int ch = sc.nextInt();
-            switch (ch) {
+        } 
+
+            int ch=0,it=0;
+            while(it!=4){
+                System.out.println("Select choice \n1:Set Attendence      \n2: View Leave Application\n3: View attendence\n4:Exit");
+                ch = sc.nextInt();
+             switch (ch) {
                 case 1:
-                    for (int i = 0; i < s[studentId].attendence.length; i++) {
-                        System.out.println("Enter day " + (i + 1) + " Attendence 0 for absent and 1 for present!");
-                        s[studentId].attendence[i] = sc.nextInt();
+                System.out.println("enter the total no of working days");
+                int workday=sc.nextInt();
+                System.out.println("Enter the roll No. of student : ");
+                int rollN = sc.nextInt();
+                for (int i = 0; i < s.length; i++) {
+                    if ((s[i].rollNo) == rollN ) {
+                        studentId = i;
                     }
-                    break;
+                }
+                s[studentId].workday = workday;
+                for (int i = 0; i < workday; i++) {
+                    System.out.println("Enter day " + (i + 1) + " Attendence 0 for absent and 1 for present!");
+                    s[studentId].attendence[i] = sc.nextInt();
+                    }
+                break;
                 case 2:
-                    System.out.println("You have successfully applied for leave, Now go study!");
+                    System.out.println();
                     s[studentId].isApplied = true;
+                    for (int i = 0; i < s.length; i++) {
+                        if ((s[i].isApplied) == true) {
+                            System.out.println("Student with roll No. "+ s[i].rollNo+" had applied for Leave\nDo you want to accept the request? for YES enter 1 else enter 0");
+                            int ac = sc.nextInt();
+                            if(ac==1)
+                            s[i].isAccepted = "Yes";
+                            else
+                            s[i].isAccepted = "No";
+                        }
+                    }
                     break;
                 
                 case 3: 
@@ -199,10 +213,18 @@ class teacher {
                         }
                         
                     }
+                case 4:
+                 it=4;
+                 break;
+                }
+                if(it==4)break;
             }
-        }
-
-    }
+                
+     }
+    
+        
+        
+    
 
     public static void main(String args[]) {
         Scanner sc = new Scanner(System.in);
@@ -238,7 +260,7 @@ class teacher {
                     break;
                 case 3:
                     instructorLogin(i,s);
-
+                    break;
                 case 4:
                     iterate = 4;
                     break;
